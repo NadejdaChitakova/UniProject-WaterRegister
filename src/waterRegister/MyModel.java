@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import javax.swing.table.AbstractTableModel;
 
 
+
+
 public class MyModel extends AbstractTableModel {
 	
 	 
@@ -40,6 +42,22 @@ public class MyModel extends AbstractTableModel {
 		}// while
 	 }// end setRS - filling ArrayList with ResultSet values
 	 
+//	 @Override
+//	public boolean isCellEditable(int rowIndex, int columnIndex) {
+//		// TODO Auto-generated method stub
+//		 
+//		return true;
+//	}
+//	 
+//	 public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
+////		if(columnIndex == 0) {
+////			data.set(rowIndex, aValue);
+////			fireTableCellUpdated(rowIndex, rowIndex);
+////		}
+//		 MyModel.set(rowIndex,aValue);
+//		 fireTableCellUpdated(rowIndex, rowIndex);
+//	 }
+//	 
 	 public int getColumnCount(){
 		 return columnCount;
 	 }
@@ -63,4 +81,8 @@ public class MyModel extends AbstractTableModel {
 			 return null;
 		 }
 	 }// end getColumnName
+
+
+	 
+	 
 } // end class MyModel 
