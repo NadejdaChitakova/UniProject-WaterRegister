@@ -9,6 +9,7 @@ import java.awt.event.MouseListener;
 
 
 import javax.swing.JButton;
+
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -78,7 +79,7 @@ public class CreateRegionFrame extends MainFrame{
 		//------------------------- Add table and scroller to down panel
 		tablePanel.add(table);
 		table.addMouseListener(new TableListener());
-		table.setModel(DBHelper.getAllData());
+		table.setModel(DBHelper.getAllData("AREA"));
 		
 		scroller.setPreferredSize(new Dimension( 450,160));
 		region.add(tablePanel);
@@ -93,7 +94,7 @@ public class CreateRegionFrame extends MainFrame{
 			id = Integer.parseInt(table.getValueAt(row, 0).toString());
 			table.getValueAt(row, 0);
 
-			fillTextField(row,table, RegionNameTF, RegionSpaceTF, regionPopulationTF);
+			fillTextField(row,table, RegionNameTF, RegionSpaceTF, regionPopulationTF,null);
 
 		}
 
@@ -127,9 +128,9 @@ public class CreateRegionFrame extends MainFrame{
 	class AddAction implements ActionListener{
 		@Override
 		public void actionPerformed(ActionEvent e) {		
-			DBHelper.insertDataInTable("area", RegionNameTF, RegionSpaceTF, regionPopulationTF);
-			table.setModel(DBHelper.getAllData());
-			System.out.println("text");	
+			CrudRegion.insertIntoArea(RegionNameTF, RegionSpaceTF, regionPopulationTF);
+			table.setModel(DBHelper.getAllData("AREA"));
+			System.out.println("add");	
 			clearForm(RegionNameTF, RegionSpaceTF, regionPopulationTF);
 		}
 
@@ -140,7 +141,7 @@ public class CreateRegionFrame extends MainFrame{
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			DBHelper.deleteDataFromTable("area");
-			table.setModel(DBHelper.getAllData());
+			table.setModel(DBHelper.getAllData("AREA"));
 		}
 		
 	}
@@ -149,8 +150,8 @@ public class CreateRegionFrame extends MainFrame{
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			DBHelper.editData("area", RegionNameTF, RegionSpaceTF, regionPopulationTF);
-			table.setModel(DBHelper.getAllData());
+			CrudRegion.editDataRegion(RegionNameTF, RegionSpaceTF, regionPopulationTF);
+			table.setModel(DBHelper.getAllData("AREA"));
 		}
 		
 	}

@@ -48,10 +48,13 @@ public class MainFrame extends JFrame{
 		population.setText("");
 	}
 	
-	public void fillTextField(int row ,JTable table, JTextField name, JTextField space, JTextField population) {
+	public void fillTextField(int row ,JTable table, JTextField name, JTextField space, JTextField population,JTextField comment) {
 		name.setText(table.getValueAt(row, 1).toString());
 		space.setText(table.getValueAt(row, 2).toString());
 		population.setText(table.getValueAt(row, 3).toString());
+		if (comment != null) {
+			comment.setText(table.getValueAt(row, 4).toString());
+		}
 	}
 	
 }

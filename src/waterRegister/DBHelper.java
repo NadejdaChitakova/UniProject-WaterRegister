@@ -7,6 +7,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import javax.swing.JComboBox;
 import javax.swing.JTextField;
 
 public class DBHelper {
@@ -34,10 +35,11 @@ public class DBHelper {
 		return conn;
 	}
 	
-	static MyModel getAllData() {
+	static MyModel getAllData(String sql) {
 		conn = getConnection();
 		try {
-			state = conn.prepareStatement("SELECT * FROM AREA");
+			state = conn.prepareStatement(sql);
+			
 			result = state.executeQuery();
 			model = new MyModel(result);
 		} catch (SQLException e) {
@@ -50,64 +52,19 @@ public class DBHelper {
 		return model;
 	}
 	
-	static void insertDataInTable(String tableName, JTextField areaNameTF, JTextField areaSpaceTF, JTextField areaPopulationTF) {
-		
-		conn = getConnection();
-		String sql = "insert into "+ tableName+" values(null,?,?,?)";
-		try {
-			state= conn.prepareStatement(sql);
-			state.setString(1, areaNameTF.getText());
-			state.setInt(2,Integer.parseInt(areaSpaceTF.getText()));
-			state.setInt(3, Integer.parseInt(areaPopulationTF.getText()));
-			state.execute();
-		} catch (SQLException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-		try {
-			state.close();
-			conn.close();
-		} catch (SQLException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-	}
-	
 	
 	static void deleteDataFromTable(String tableName) {
 		conn = DBHelper.getConnection();
-		String sql = "delete from "+ tableName +" where id=?";
+		String sql = "delete from "+ tableName +" where "+tableName+"_id=?";
 		try {
 			state = conn.prepareStatement(sql);
-			state.setInt(1, CreateRegionFrame.id);
+			state.setInt(1, CreateWaterFrame.id);
 			state.execute();
 		} catch (SQLException e1) {
 		// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 			
-	}
-	
-	static void editData(String tableName,JTextField name, JTextField space,JTextField population) {//popravi go za drugite tablici
-		
-		conn = getConnection();
-		
-		//------------------------- convert jTextField
-		String strName = name.getText();
-		int intSpace = Integer.parseInt(space.getText().toString());
-		int intPopulation = Integer.parseInt(population.getText().toString());
-		
-		//------------------------- SQL statement
-		String sql = "update "+tableName+" set area_name= "+ "'"+strName+"'"+",area_space="+ intSpace+",population="+
-					intPopulation+" where id=?";
-		try {
-			state = conn.prepareStatement(sql);
-			state.setInt(1, CreateRegionFrame.id);
-			state.execute();
-		} catch (SQLException e1) {
-		// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
 	}
 	
 	static void getRowData(int id) {
@@ -132,6 +89,30 @@ public class DBHelper {
 		}
 		
 	} 
+//	static int getAreaId(JComboBox<String> combo) {
+//		
+//		conn = DBHelper.getConnection();
+//		String comboString = combo.getSelectedItem().toString();
+//		String sql = "select area_id from area where area_name='"+comboString+"'";
+//		int areaId = 0;
+//		try {
+//			state = conn.prepareStatement(sql);
+//			result = state.executeQuery();
+//			model = new MyModel(result);
+//			while (result.next()) {
+//				areaId = result.getInt("id");
+//				System.out.println(areaId);
+//				
+//			}
+//			} catch (Exception e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
+//			
+//
+//		return areaId ;
+//	}
+
 }
 	
 
