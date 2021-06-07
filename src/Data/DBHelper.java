@@ -1,39 +1,50 @@
 package Data;
 
-import java.awt.TextField;
+
+import java.io.File;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-
+import java.util.*;
 import javax.swing.JComboBox;
 import javax.swing.JTable;
-import javax.swing.JTextField;
 
 public class DBHelper {
 
-	private static Connection conn = null;
-	private static PreparedStatement state = null;
+	protected static Connection conn = null;
+	protected static PreparedStatement state = null;
 	
 	public static MyModel model = null;
 	public static ResultSet result = null;
 	
 	public static Connection getConnection() {
-		
-		try {
-			Class.forName("org.h2.Driver");
+
+		String username = "", url = "", password = "",driver = "";
+			
 			try {
-				conn = DriverManager.getConnection("jdbc:h2:C:\\Users\\nadej\\eclipse-workspace\\waterRegister;AUTO_SERVER=TRUE", "sa", "са");
-			} catch (SQLException e) {
+
+				File file = new File("C:\\Users\\nadej\\OneDrive\\Работен плот\\config.properties");
+				Scanner sc = new Scanner(file);
+				
+				while (sc.hasNextLine()) {
+					driver = sc.nextLine().trim();
+					url = sc.nextLine().trim();
+					username = sc.nextLine().trim();
+					password = sc.nextLine().trim();
+					break;
+				}
+				
+				Class.forName(driver);
+				conn = DriverManager.getConnection(url,username,password);
+	        
+			} catch (IOException | SQLException | ClassNotFoundException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return conn;
+			return conn;
 	}
 	
 	public static MyModel getAllData(String sql) {
@@ -53,31 +64,52 @@ public class DBHelper {
 		return model;
 	}
 	
-
-//	static int getAreaId(JComboBox<String> combo) {
-//		
-//		conn = DBHelper.getConnection();
-//		String comboString = combo.getSelectedItem().toString();
-//		String sql = "select area_id from area where area_name='"+comboString+"'";
-//		int areaId = 0;
-//		try {
-//			state = conn.prepareStatement(sql);
-//			result = state.executeQuery();
-//			model = new MyModel(result);
-//			while (result.next()) {
-//				areaId = result.getInt("id");
-//				System.out.println(areaId);
-//				
-//			}
-//			} catch (Exception e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			}
-//			
-//
-//		return areaId ;
-//	}
-
+	public static MyModel refreshRegionTable() {
+		String sql = "SELECT * FROM AREA";
+		return getAllData(sql);
+	}
+	public static MyModel refreshWaterSourceTable() {
+		String sql = "SELECT W.WATER_ID,W.NAME,W.SPACE,W.DEPTH,A.AREA_NAME FROM WATER W JOIN AREA A ON W.AREA_ID=A.AREA_ID";
+		return getAllData(sql);
+	}
+	
+	public static MyModel refreshResponsibleTable() {
+		String sql = "SELECT R.FIRSTNAME, R.LASTNAME,R.AGE,R.COMMENT, R.WATER_ID FROM RESPONSIBLE R JOIN WATER W ON R.WATER_ID=W.WATER_ID";
+		return getAllData(sql);
+	}
+	
+	public static MyModel getSearchedRegion(JComboBox combo) {
+		
+		String comboValue = combo.getSelectedItem().toString();
+		conn = DBHelper.getConnection();
+		
+		try {
+			state = conn.prepareStatement("SELECT * FROM AREA WHERE area_name=?");
+			System.out.println(comboValue);
+			state.setString(1,comboValue );
+			result = state.executeQuery();
+			model = new MyModel(result);
+		} catch (Exception e) {
+		// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return model;
+	}
+	public static MyModel getSearchedWaterSource(String waterName, int regionId,JTable table) {
+		conn = DBHelper.getConnection();
+		try {
+			state = conn.prepareStatement("SELECT W.WATER_ID,W.NAME,W.SPACE,W.DEPTH,A.AREA_NAME FROM WATER W"
+										+ " JOIN AREA A ON W.AREA_ID=A.AREA_ID WHERE W.NAME=? and a.area_id=?");
+			state.setString(1, waterName);
+			state.setInt(2, regionId);
+			result = state.executeQuery();
+			model = new MyModel(result);
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+		return model;
+	}
+	
 }
 	
 
